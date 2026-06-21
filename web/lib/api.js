@@ -1,5 +1,7 @@
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000';
+
 async function request(path, options = {}) {
-  const res = await fetch(path, {
+  const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
