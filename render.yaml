@@ -1,0 +1,48 @@
+# Render Blueprint — https://render.com/docs/blueprint-spec
+# Deploys two web services: the Express API and the Next.js frontend.
+# In the Render dashboard: New + > Blueprint > connect this repo. Render reads
+# this file, then prompts for the secret env vars marked `sync: false`.
+services:
+  - type: web
+    name: competlearn-api
+    runtime: node
+    plan: free
+    rootDir: server
+    buildCommand: npm install
+    startCommand: node index.js
+    healthCheckPath: /api/health
+    autoDeploy: true
+    envVars:
+      # Required for live competitor discovery + facts.
+      - key: CALA_API_KEY
+        sync: false
+      # Optional — without it the app runs in mock AI mode.
+      - key: OPENAI_API_KEY
+        sync: false
+      # SQLite lives on the instance's ephemeral disk by default (data resets on
+      # each deploy). For persistence, switch to a paid instance, uncomment the
+      # `disk` block below, and set DB_PATH to a path on the mount.
+      # - key: DB_PATH
+      #   value: /var/data/competlearn.sqlite
+    # disk:
+    #   name: competlearn-data
+    #   mountPath: /var/data
+    #   sizeGB: 1
+
+  - type: web
+    name: competlearn-web
+    runtime: node
+    plan: free
+    rootDir: web
+    buildCommand: npm install && npm run build
+    # Run Next directly (not via `npm run start`) so Render monitors the server
+    # process itself — the npm wrapper caused intermittent `no-server` routing.
+    startCommand: node node_modules/next/dist/bin/next start -p $PORT -H 0.0.0.0
+    autoDeploy: true
+    envVars:
+      # Backend hostname is injected at build time; the client prepends https://.
+      - key: NEXT_PUBLIC_API_BASE
+        fromService:
+          type: web
+          name: competlearn-api
+          property: host

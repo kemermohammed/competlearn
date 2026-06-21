@@ -17,8 +17,9 @@ latest known facts about each competitor and re-runs the AI analysis.
 | LLM      | OpenAI (optional — mock mode if unset)| —          |
 | Data     | Cala API (`https://api.cala.ai`)      | —          |
 
-The Next.js dev server proxies `/api/*` to the Express backend, so you open the
-app at **http://localhost:3001** and the frontend talks to the backend transparently.
+You open the app at **http://localhost:3001**; the frontend calls the Express
+backend directly at `http://localhost:3000` (cross-origin, CORS-enabled). Override
+the backend URL with `NEXT_PUBLIC_API_BASE` if needed.
 
 ## Setup
 

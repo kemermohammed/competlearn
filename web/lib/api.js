@@ -1,5 +1,10 @@
+// Accept a full URL or a bare host (Render injects the backend's hostname without
+// a scheme); default to https when no scheme is present.
+const RAW_API_BASE = process.env.NEXT_PUBLIC_API_BASE || 'http://localhost:3000';
+const API_BASE = /^https?:\/\//.test(RAW_API_BASE) ? RAW_API_BASE : `https://${RAW_API_BASE}`;
+
 async function request(path, options = {}) {
-  const res = await fetch(path, {
+  const res = await fetch(`${API_BASE}${path}`, {
     headers: { 'Content-Type': 'application/json' },
     ...options,
   });
