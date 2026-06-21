@@ -35,7 +35,9 @@ services:
     plan: free
     rootDir: web
     buildCommand: npm install && npm run build
-    startCommand: npm run start
+    # Run Next directly (not via `npm run start`) so Render monitors the server
+    # process itself — the npm wrapper caused intermittent `no-server` routing.
+    startCommand: node node_modules/next/dist/bin/next start -p $PORT -H 0.0.0.0
     autoDeploy: true
     envVars:
       # Backend hostname is injected at build time; the client prepends https://.
