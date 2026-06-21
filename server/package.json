@@ -1,0 +1,19 @@
+{
+  "name": "competlearn-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "competiLearn Express + SQLite backend",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --watch index.js",
+    "start": "node index.js",
+    "test:cala": "node test-cala.js"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.8.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "openai": "^4.77.0"
+  }
+}
