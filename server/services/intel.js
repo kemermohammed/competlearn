@@ -94,6 +94,22 @@ async function discoverCompetitors(userCompany, { limit = 5 } = {}) {
   return { competitors, answerText: answer.content || '' };
 }
 
+// Strip Cala's inline reference ids and markdown markup so stored facts read as
+// clean prose in the feed.
+function cleanFactText(text) {
+  if (!text) return '';
+  return text
+    .replace(/\[[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\]/gi, '')
+    .replace(/^#{1,6}\s*/gm, '')
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    .replace(/`([^`]*)`/g, '$1')
+    .replace(/^\s*[-*]\s+/gm, '• ')
+    .replace(/^-{3,}\s*$/gm, '')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 /**
  * Fetch current verified facts about a competitor company via Cala.
  * Returns { factText, sourceUrl }.
@@ -104,7 +120,7 @@ async function fetchCompanyFacts(competitor) {
   }?`;
 
   const answer = await cala.knowledgeSearch(input);
-  const factText = (answer.content || '').trim();
+  const factText = cleanFactText(answer.content);
   const sourceUrl = extractSourceUrl(answer);
   return { factText, sourceUrl };
 }
